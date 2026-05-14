@@ -3,63 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Majpara Alim Madrasha </title>
+    <title>Majpara Alim Madrasha Portal</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-
-    <nav class="navbar">
-        <h1>Majpara Alim Madrasha Portal</h1>
-        <div id="userStatus">Connecting to Database...</div>
-    </nav>
-
-    <div class="container">
+    <div class="dashboard">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <ul>
-                <li onclick="showSection('admission')">Student Admission</li>
-                <li onclick="showSection('viewStudents')">View Students</li>
-                <li onclick="showSection('results')">Publish Result</li>
+        <nav class="sidebar">
+            <div class="logo-area">
+                <!-- স্কুলের লোগো (এখানে আপনার লোগোর লিঙ্ক বসাবেন) -->
+                <div class="school-logo">
+                    <img src="https://via.placeholder.com/80?text=Logo" alt="Madrasha Logo">
+                </div>
+                <h2>Majpara Alim Madrasha</h2>
+                <div class="social-links">
+                    <a href="https://www.google.com" target="_blank" title="Google"><i class="fab fa-google"></i></a>
+                    <a href="https://www.youtube.com" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <ul class="nav-links">
+                <li class="active" onclick="showTab('home')"><i class="fas fa-home"></i> Home Dashboard</li>
+                <li onclick="showTab('admission')"><i class="fas fa-user-plus"></i> Student Admission</li>
+                <li onclick="showTab('view')"><i class="fas fa-users"></i> Student Database</li>
+                <li onclick="showTab('results')"><i class="fas fa-file-invoice"></i> Examination Results</li>
+                <li onclick="showTab('auth')"><i class="fas fa-sign-in-alt"></i> Login / Sign Up</li>
             </ul>
-        </aside>
+        </nav>
 
         <!-- Main Content -->
-        <main class="content">
-            <!-- Admission Section -->
-            <section id="admission">
-                <h2>Student Admission Form</h2>
-                <form id="studentForm">
-                    <input type="text" id="stuName" placeholder="Full Name" required>
-                    <input type="text" id="stuID" placeholder="Student ID" required>
-                    <input type="text" id="stuClass" placeholder="Class" required>
-                    <button type="submit" id="saveBtn">Register Student</button>
-                </form>
-            </section>
+        <div class="main-content">
+            <header>
+                <h1 id="tab-title">Portal Dashboard</h1>
+                <div class="header-right">
+                    <div class="status">
+                        <span id="dot" class="dot-red"></span>
+                        <span id="status-text">Connecting...</span>
+                    </div>
+                </div>
+            </header>
 
-            <!-- View Students Section -->
-            <section id="viewStudents" style="display:none;">
-                <h2>Registered Students</h2>
-                <table id="studentTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Class</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="studentList">
-                        <!-- Data will come from Firebase -->
-                    </tbody>
-                </table>
-            </section>
-        </main>
+            <div class="content-body">
+                <!-- ১. হোম পেজ (নতুন পেজ) -->
+                <section id="home" class="tab-content active">
+                    <div class="welcome-banner">
+                        <h2>Welcome to Majpara Alim Madrasha</h2>
+                        <p>Manage your students and academic records efficiently.</p>
+                    </div>
+                </section>
+
+                <!-- ২. অ্যাডমিশন পেজ -->
+                <section id="admission" class="tab-content">
+                    <div class="card">
+                        <h3>Registration Form</h3>
+                        <form id="admissionForm">
+                            <div class="input-grid">
+                                <input type="text" id="name" placeholder="Full Name" required>
+                                <input type="text" id="id" placeholder="Student ID" required>
+                                <input type="text" id="class" placeholder="Class" required>
+                                <input type="text" id="guardian" placeholder="Guardian's Name">
+                            </div>
+                            <button type="submit" class="btn-submit">Register Student</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- ৩. লগইন ও সাইন আপ পেজ (নতুন পেজ) -->
+                <section id="auth" class="tab-content">
+                    <div class="auth-container">
+                        <div class="card auth-card">
+                            <h3>Staff Login</h3>
+                            <input type="email" placeholder="Email Address">
+                            <input type="password" placeholder="Password">
+                            <button class="btn-submit">Login</button>
+                            <p class="auth-toggle">Don't have an account? <span>Sign Up</span></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ৪. ডাটাবেস পেজ -->
+                <section id="view" class="tab-content">
+                    <div class="card">
+                        <h3>Student Records</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr><th>ID</th><th>Name</th><th>Class</th><th>Action</th></tr>
+                                </thead>
+                                <tbody id="studentTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
