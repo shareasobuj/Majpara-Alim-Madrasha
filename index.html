@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Majpara Alim Madrasha </title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <h1>Majpara Alim Madrasha Portal</h1>
+        <div id="userStatus">Connecting to Database...</div>
+    </nav>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul>
+                <li onclick="showSection('admission')">Student Admission</li>
+                <li onclick="showSection('viewStudents')">View Students</li>
+                <li onclick="showSection('results')">Publish Result</li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Admission Section -->
+            <section id="admission">
+                <h2>Student Admission Form</h2>
+                <form id="studentForm">
+                    <input type="text" id="stuName" placeholder="Full Name" required>
+                    <input type="text" id="stuID" placeholder="Student ID" required>
+                    <input type="text" id="stuClass" placeholder="Class" required>
+                    <button type="submit" id="saveBtn">Register Student</button>
+                </form>
+            </section>
+
+            <!-- View Students Section -->
+            <section id="viewStudents" style="display:none;">
+                <h2>Registered Students</h2>
+                <table id="studentTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Class</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentList">
+                        <!-- Data will come from Firebase -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
