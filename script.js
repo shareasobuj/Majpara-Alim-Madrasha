@@ -1,7 +1,8 @@
 // আপনার এপিআই কি এখানে রিপ্লেস করুন
 const firebaseConfig = {
-    apiKey: "AIzaSyBUtQ00RBIEPE247HRYIKguQ58vbx71Wk8",
+  apiKey: "AIzaSyBUtQ00RBIEPE247HRYIKguQ58vbx71Wk8",
   authDomain: "majpara-alim-madrasha.firebaseapp.com",
+  databaseURL: "https://majpara-alim-madrasha-default-rtdb.firebaseio.com",
   projectId: "majpara-alim-madrasha",
   storageBucket: "majpara-alim-madrasha.firebasestorage.app",
   messagingSenderId: "383841858474",
