@@ -1,4 +1,4 @@
-// ১. ফায়ারবেজ কনফিগারেশন (আপনার কনসোল থেকে কপি করে এখানে বসান)
+// আপনার এপিআই কি এখানে রিপ্লেস করুন
 const firebaseConfig = {
     apiKey: "AIzaSyBUtQ00RBIEPE247HRYIKguQ58vbx71Wk8",
   authDomain: "majpara-alim-madrasha.firebaseapp.com",
@@ -8,111 +8,68 @@ const firebaseConfig = {
   appId: "1:383841858474:web:2f7b3fcbf74f883da3f1d3",
   measurementId: "G-RJL1EBS37F"
 };
-
-// ২. ফায়ারবেজ ইনিশিয়ালাইজ করা
+// Initialize
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const auth = firebase.auth();
 
-// ৩. ডাটাবেস কানেকশন স্ট্যাটাস চেক করা
+// ১. কানেকশন মনিটর
 db.ref(".info/connected").on("value", (snap) => {
-    const dot = document.getElementById("dot");
+    const dot = document.getElementById("status-dot");
     const text = document.getElementById("status-text");
     if (snap.val() === true) {
-        dot.className = "dot-green"; // অনলাইন হলে সবুজ ডট
-        text.innerText = "Online";
+        dot.style.background = "#00b894";
+        text.innerText = "Systems Active";
     } else {
-        dot.className = "dot-red"; // অফলাইন হলে লাল ডট
-        text.innerText = "Offline";
+        dot.style.background = "#d63031";
+        text.innerText = "Offline Mode";
     }
 });
 
-// ৪. স্টুডেন্ট রেজিস্ট্রেশন (অ্যাডমিশন ফর্ম)
-const admissionForm = document.getElementById('admissionForm');
-if(admissionForm) {
-    admissionForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const id = document.getElementById('id').value;
-        const name = document.getElementById('name').value;
-        const sClass = document.getElementById('class').value;
-        const guardian = document.getElementById('guardian').value;
+// ২. ট্যাব হ্যান্ডলার (স্মুথ নেভিগেশন)
+window.tabHandler = function(target) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('active'));
+    
+    document.getElementById(target).classList.add('active');
+    document.getElementById('page-title').innerText = target.charAt(0).toUpperCase() + target.slice(1);
+    
+    if(target === 'database') fetchRecords();
+};
 
-        // ডাটাবেসে ডাটা পাঠানো
-        db.ref('students/' + id).set({
-            name: name,
-            class: sClass,
-            guardian: guardian,
-            timestamp: Date.now()
-        })
-        .then(() => {
-            alert("সফলভাবে রেজিস্ট্রেশন হয়েছে!");
-            admissionForm.reset();
-        })
-        .catch((error) => {
-            alert("ভুল হয়েছে: " + error.message);
-        });
-    });
-}
-
-// ৫. ট্যাব বা পেজ পরিবর্তনের ফাংশন
-window.showTab = function(tabName) {
-    // সব সেকশন হাইড করা
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // সব মেনু থেকে একটিভ ক্লাস সরানো
-    document.querySelectorAll('.nav-links li').forEach(li => {
-        li.classList.remove('active');
-    });
-    
-    // নির্দিষ্ট ট্যাব দেখানো
-    const activeTab = document.getElementById(tabName);
-    if(activeTab) {
-        activeTab.classList.add('active');
-    }
-    
-    // হেডার টাইটেল পরিবর্তন
-    const titles = {
-        'home': 'Portal Dashboard',
-        'admission': 'Student Admission',
-        'view': 'Student Records',
-        'auth': 'Staff Authentication'
+// ৩. স্টুডেন্ট ডাটা সেভ করা
+document.getElementById('studentForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = document.getElementById('stuID').value;
+    const studentData = {
+        name: document.getElementById('stuName').value,
+        class: document.getElementById('stuClass').value,
+        guardian: document.getElementById('stuGuardian').value,
+        addedOn: new Date().toLocaleDateString()
     };
-    document.getElementById('tab-title').innerText = titles[tabName] || "Portal";
-    
-    // যদি ডাটাবেস পেজ হয় তবে ডাটা লোড করা
-    if(tabName === 'view') loadStudents();
-}
 
-// ৬. ডাটাবেস থেকে স্টুডেন্ট লিস্ট নিয়ে আসা
-function loadStudents() {
-    const tbody = document.getElementById('studentTableBody');
-    if(!tbody) return;
+    db.ref('students/' + id).set(studentData)
+    .then(() => {
+        alert("Registration Complete!");
+        document.getElementById('studentForm').reset();
+    }).catch(err => alert("Error: " + err.message));
+});
 
-    db.ref('students').on('value', (snapshot) => {
-        tbody.innerHTML = "";
-        snapshot.forEach((child) => {
-            const student = child.val();
-            tbody.innerHTML += `
+// ৪. ডাটা ফেচিং
+function fetchRecords() {
+    const list = document.getElementById('studentData');
+    db.ref('students').on('value', (snap) => {
+        list.innerHTML = "";
+        snap.forEach(child => {
+            const val = child.val();
+            list.innerHTML += `
                 <tr>
-                    <td>${child.key}</td>
-                    <td>${student.name}</td>
-                    <td>${student.class}</td>
-                    <td>
-                        <button onclick="deleteStudent('${child.key}')" style="color:red; cursor:pointer; border:none; background:none;">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </td>
+                    <td><b>${child.key}</b></td>
+                    <td>${val.name}</td>
+                    <td>${val.class}</td>
+                    <td><button onclick="deleteRow('${child.key}')" style="color:red; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
                 </tr>
             `;
         });
     });
-}
-
-// ৭. ডাটা ডিলিট করার ফাংশন
-window.deleteStudent = function(id) {
-    if(confirm("আপনি কি নিশ্চিতভাবে এই ডাটা ডিলিট করতে চান?")) {
-        db.ref('students/' + id).remove();
-    }
 }
